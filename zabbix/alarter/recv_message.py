@@ -4,9 +4,20 @@ import threading
 import threadpool
 import sendmail
 import MySQLdb
-ctx = zmq.Context() # create a new context to kick the wheels
-sock = ctx.socket(zmq.PULL)
-sock.bind('tcp://127.0.0.1:5000')
+
+
+def test_connect(ip,port):
+    '''
+    make a socket to test port
+
+    '''
+    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    try:
+        s.connect((ip,int(port)))
+        s.close()
+        return True
+    except:
+        return False
 
 #class Alarmthread(threading.Thread):
 #    def __init__(self,t_id):
@@ -15,6 +26,10 @@ sock.bind('tcp://127.0.0.1:5000')
 #    def run():
 
 def data_handler(alist):
+    '''
+    format alarm data
+
+    '''
     title = alist[1]
     host = title.split('--')[1].strip()
     status = title.split('--')[0].split(',')[-1]
@@ -23,17 +38,19 @@ def data_handler(alist):
     return new
 
 def sendemail(user,title,body):
-    
-    EMAIL_SENDER="opsnotice@fangdd.com"
-    EMAIL_LOGIN_NAME="opsnotice@fangdd.com"
-    EMAIL_LOGIN_PASSWD="fd125@!34QW!aq"
-    EMAIL_SERVER="smtp.exmail.qq.com"
-    EMAIL_SERVER_PORT = 25
+    '''
+    send email to users
+
+    '''
+
     user = [user]
     sendmail.send_html_mail(EMAIL_SENDER,user,title,body, EMAIL_LOGIN_NAME, EMAIL_LOGIN_PASSWD, EMAIL_SERVER, EMAIL_SERVER_PORT)
-    
-def write_to_db(alist):
 
+def write_to_db(alist):
+    '''
+    write some data to database , (IP,status,item)
+
+    '''
     conn = MySQLdb.connect(host="localhost",user="root",passwd="",db="zabbix_alarm",unix_socket="/tmp/mysql.sock",charset="utf8")
     cursor = conn.cursor()
     host,status,item = alist
@@ -41,7 +58,21 @@ def write_to_db(alist):
     #param = (host,status,item)
     result = cursor.execute(sql)
 
-pool = threadpool.ThreadPool(100)
+#### main part
+
+bind_ip = '127.0.0.1'
+bind_port = 5000
+tcp_sock = 'tcp://%s:%s' %(bind_ip,str(bind_port))
+thread_num = 100
+
+if not test_connect(bind_ip,bind_port):
+    sys.exit(1)
+
+pool = threadpool.ThreadPool(thread_num)
+ctx = zmq.Context() # create a new context to kick the wheels
+sock = ctx.socket(zmq.PULL)
+sock.bind(tcp_sock)
+
 while True:
     mess = sock.recv_pyobj()
     print 'received python object:', mess

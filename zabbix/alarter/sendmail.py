@@ -80,11 +80,7 @@ def send_html_mail(m_from, m_to_list, m_title, m_content, username, password, sm
                 
 if __name__ == "__main__":
     
-    EMAIL_SENDER="opsnotice@fangdd.com"
-    EMAIL_LOGIN_NAME="opsnotice@fangdd.com"
-    EMAIL_LOGIN_PASSWD="fd125@!34QW!aq"
-    EMAIL_SERVER="smtp.exmail.qq.com"
-    EMAIL_SERVER_PORT = 25
+
     
     if len(sys.argv[1:]) < 3:
         print "Usage:\n    %s to subject body" % (sys.argv[0])
