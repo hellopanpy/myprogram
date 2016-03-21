@@ -1,0 +1,20 @@
+【配置文件】
+1) #开头的行为注释行
+2) 全局配置
+[system] -- 为section，system为section名，section名必须为system
+groups  -- system section下必须包含groups配置项，用于指定使用哪些组
+3) 除了system section外其他section
+以[esf list]为例，esf为section名，用在groups参数，可以随意取，但不能包含空格（tab），list为section类型，保持list不变即可
+esf section下每一行都是监控配置项，其中hosts为主机列表，主机列表之间通过,分割；module模块名；mails告警接收人列表，以，分割；
+
+【用法示例】
+1) -f参数，指定配置文件路径，同时相对路径、绝对路径
+cd ${your_script_dir}
+python mport.py -f ${your_conf_file_path}
+
+2)-f参数同1)所述；-g参数，指定使用配置文件中哪些组
+cd ${your_script_dir}
+python mping.py -f ${your_conf_file_path} -g ${your_groups}
+
+【crontab定时任务】-- 参考
+*/1 * * * * cd /home/qiujingqin/fdd_monitor/ping_monitor && python mping.py  -f etc/dest/esf.conf >/tmp/mport.py.log 2>&1

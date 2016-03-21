@@ -1,0 +1,6 @@
+2016-01-07 16:53:33,856  mylog-INFO : test
+2016-01-07 17:08:11,851  mylog-ERROR : test
+2016-01-07 17:12:45,114  mylog-ERROR : this is a error
+2016-01-07 17:26:48,265  mylog-ERROR : this is a error
+2016-01-07 17:30:02,842  mylog-ERROR : this is a error
+2016-01-07 17:31:10,637  mylog-ERROR : this is a error
