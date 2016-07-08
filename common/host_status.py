@@ -185,6 +185,26 @@ def get_interface(name='eth0'):
     d['ip']=ipaddr
     d['netmask']=netmask
     return d
+def get_dev_speed(dev):
+    '''
+    get dev speed
+    '''
+    with open("/proc/net/dev","r") as f:
+        com = re.compile(".*%s" %dev)
+        for line in f:
+            if re.match(com,line):
+                rx_start = int(line.split()[1])
+                tx_start = int(line.split()[9])
+    time.sleep(1)
+    with open("/proc/net/dev", "r") as f:
+        com = re.compile(".*%s" % dev)
+        for line in f:
+            if re.match(com, line):
+                rx_end = int(line.split()[1])
+                tx_end = int(line.split()[9])
+    rx_speed = "RX: %d KB/s" %((rx_end - rx_start)/1024)
+    tx_speed = "TX: %d KB/s" %((tx_end - tx_start)/1024)
+    return (rx_speed,tx_speed)
 def tcp_connection():
     '''
     get tcp connections
@@ -231,10 +251,28 @@ def get_tcp_value(name):
     with open(tcp_file) as f:
         v = f.read().strip()
     return v
+def get_default_tcp_value():
+    d = {}
+    kernel_key = ('ip_local_port_range', 'tcp_keepalive_time', 'tcp_syncookies', 'tcp_max_tw_buckets')
+    for k in kernel_key:
+        d[k] = get_tcp_value(k)
+    return d
 
-class Host_status():
+def print_host_status(self):
+    print "hostname: ",get_hostname()
+    print "cpuinfo: ",cpuinfo()
+    print "meminfo: ",meminfo(unit='MB')
+    print "diskinfo: ",diskinfo()
+    print "diskusage: ",diskusage()
+    for dev in get_dev():
+        print "%s: "%dev,get_interface(dev)
+        print "%s: " %dev,get_dev_speed(dev)
+    print "tcp_connection: ",tcp_connection()
+    print "tcp_value: ",get_default_tcp_value()
 
-    def __init__(self):
+if __name__ == "__main__":
+    hs = Host_status()
+    hs.print_host_status()
 
 
 
