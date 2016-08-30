@@ -12,6 +12,7 @@ import psutil
 import os.path
 import time
 import subprocess,datetime,signal,platform
+import json
 
 ############
 # cpu info #
@@ -399,14 +400,103 @@ def print_host_status():
         ps_info = get_process_info(pid)
         print "%s   %d  " % (ps_name,pid),ps_info
         print "\n"
-def dump_to_json():
+def dump_to_json(indent=False):
     '''
     dump info json
     :return: json
     '''
+    _hostname = get_hostname()
+    _cpuinfo = cpuinfo()
+    _meminfo = meminfo(unit='MB')
+    _diskinfo = diskinfo()
+    _diskusage = diskusage()
+    _dev_speed = {}
+    _dev_info = {}
+    for dev in get_dev():
+        _dev_speed['dev'] = get_dev_speed(dev)
+        _dev_info['dev'] = get_interface(dev)
+    _tcp_connection = tcp_connection()
+    _get_default_tcp_value = get_default_tcp_value()
+    _listen_port = get_listen_port()
+    _process = {}
+    _processinfo = {}
+    for port in _listen_port:
+        _pid = get_pid_by_port(port)
+        _ps_name = get_process_name(_pid)
+        _ps_info = get_process_info(_pid)
+        _process[str(_pid)] =  _ps_name
+        _processinfo[str(_pid)] = _ps_info
+    obj = {
+        'hostname': _hostname,
+        'cpuinfo': _cpuinfo,
+        'meminfo': _meminfo,
+        'diskinfo': _diskinfo,
+        'diskusage': _diskusage,
+        'dev_info': _dev_info,
+        'dev_speed': _dev_speed,
+        'tcp_connection': _tcp_connection,
+        'get_default_tcp_value': _get_default_tcp_value,
+        'listen_port': _listen_port,
+        'process': _process,
+        'processinfo': _processinfo
+    }
+    if indent:
+        return json.dumps(obj,indent=4)
+    else:
+        return json.dumps(obj)
+
+def dump_to_jsonfile(jsonfile,indent=False)
+    '''
+
+    :param jsonfile:
+    :param indent:
+    :return:
+    '''
+    _hostname = get_hostname()
+    _cpuinfo = cpuinfo()
+    _meminfo = meminfo(unit='MB')
+    _diskinfo = diskinfo()
+    _diskusage = diskusage()
+    _dev_speed = {}
+    _dev_info = {}
+    for dev in get_dev():
+        _dev_speed['dev'] = get_dev_speed(dev)
+        _dev_info['dev'] = get_interface(dev)
+    _tcp_connection = tcp_connection()
+    _get_default_tcp_value = get_default_tcp_value()
+    _listen_port = get_listen_port()
+    _process = {}
+    _processinfo = {}
+    for port in _listen_port:
+        _pid = get_pid_by_port(port)
+        _ps_name = get_process_name(_pid)
+        _ps_info = get_process_info(_pid)
+        _process[str(_pid)] = _ps_name
+        _processinfo[str(_pid)] = _ps_info
+    obj = {
+        'hostname': _hostname,
+        'cpuinfo': _cpuinfo,
+        'meminfo': _meminfo,
+        'diskinfo': _diskinfo,
+        'diskusage': _diskusage,
+        'dev_info': _dev_info,
+        'dev_speed': _dev_speed,
+        'tcp_connection': _tcp_connection,
+        'get_default_tcp_value': _get_default_tcp_value,
+        'listen_port': _listen_port,
+        'process': _process,
+        'processinfo': _processinfo
+    }
+    with open(jsonfile,'w') as f:
+        if indent:
+            json.dump(obj,f,indent=4)
+        else:
+            json.dump(obj,f)
 
 if __name__ == "__main__":
     print_host_status()
+    jsonfile = 'data.json'
+    dump_to_jsonfile(jsonfile, indent=False)
 
 
 
