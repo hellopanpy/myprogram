@@ -15,6 +15,7 @@ import pycurl
 class Test_url():
     def __init__(self, url):
         self.url = url
+
         buffer = BytesIO()
         c = pycurl.Curl()
         c.setopt(c.URL, self.url)
@@ -30,8 +31,8 @@ class Test_url():
         self.http_download_size = c.getinfo(pycurl.SIZE_DOWNLOAD)  ## 下载文件大小
         self.http_content_type = c.getinfo(pycurl.CONTENT_TYPE)  ## 下载文件类型
         self.http_romote_ip = c.getinfo(pycurl.PRIMARY_IP)  ## 服务器IP
-        self.http_romote_port = c.getinfo(pycurl.PRIMARY_PORT)  ## 服务器端口
-        self.http_local_ip = c.getinfo(pycurl.LOCAL_IP)  ## 本地IP
+        #self.http_romote_port = c.getinfo(pycurl.PRIMARY_PORT)  ## 服务器端口
+        #self.http_local_ip = c.getinfo(pycurl.LOCAL_IP)  ## 本地IP
 
     def dump_to_json(self):
         http_info = {
@@ -45,8 +46,6 @@ class Test_url():
             'http_download_size': self.http_download_size,
             'http_content_type': self.http_content_type,
             'http_romote_ip': self.http_romote_ip,
-            'http_romote_port': self.http_romote_port,
-            'http_local_ip': self.http_local_ip
         }
         return json.dumps(http_info)
 
@@ -61,8 +60,8 @@ class Test_url():
         print "下载文件大小: %.2f KB" % (self.http_download_size / 1024)
         print "下载文件类型: %s" % self.http_content_type
         print "服务器IP: %s" % self.http_romote_ip
-        print "服务器端口: %d" % self.http_romote_port
-        print "本地IP %s" % self.http_local_ip
+        #print "服务器端口: %d" % self.http_romote_port
+        #print "本地IP %s" % self.http_local_ip
 
 
 if __name__ == "__main__":
