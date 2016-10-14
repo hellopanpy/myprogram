@@ -1,7 +1,7 @@
 #--*--coding:utf-8--*--
 #__author__ = 'Panpy'
 
-import urllib
+import python.spider.urllib
 import urllib2
 import re
 
