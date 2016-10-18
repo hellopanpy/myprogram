@@ -85,28 +85,20 @@ class Taobao:
         #print photo_msg
         return photo_msg
 
-    def get_img_url(self,img_url):
+    def get_img_url(self,img_url,print_std=False):
         '''
         get img url
         :param img_url:
         :return: img url list
         '''
         self.driver.get(img_url)
-        img_elem = self.driver.find_elements_by_xpath('//div[@class="mm-photoimg-area"]/a/img')
-        explain_elem = self.driver.find_elements_by_xpath('//div[@class="mm-photoW-cell-middle"]/p[@class="mm-explain"]')
-        photo_id = 0
-        for img,explain in zip(img_elem,explain_elem):
-            print img.get_attribute('src')
-            print ""
-            print explain.text
-        # for img in img_elem:
-        #     print img.get_attribute('src')
-        #     print ""
-        # for explain in explain_elem:
-        #     print ""
-        #     print explain.text
-        img_msg = [ (explain.text,img.get_attribute('src')) for img,explain in zip(img_elem,explain_elem) if not explain: explain]
-        return img_msg
+        img_elems = self.driver.find_elements_by_xpath('//div[@class="mm-photoimg-area"]/a/img')
+        img_url_list = [ img_elem.get_attribute('src') for img_elem in img_elems ]
+        for img in img_elems:
+            if print_std:
+                print img.get_attribute('src')
+                print ""
+        return img_url_list
 
     def save_info(self,infopath,info_str):
         '''
@@ -119,7 +111,7 @@ class Taobao:
             f.write(info_str)
 
 
-    def save_img(self,imgfile,img):
+    def save_img(self,imgfile,imgurl):
         '''
         save img
         :param img:
@@ -127,7 +119,7 @@ class Taobao:
         :return:
         '''
         headers = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'}
-        request = urllib2.Request(img, headers=headers)
+        request = urllib2.Request(imgurl, headers=headers)
         response = urllib2.urlopen(request)
         with open(imgfile,'wb') as f:
             f.write(response.read())
@@ -163,20 +155,18 @@ if __name__ == "__main__":
         taobao.save_info(name_dir,detail_info['detail_msg'])
         photo_url = detail_info['photo_url']
         photo_msg = taobao.get_img_info(photo_url)
-
+        img_id = 1
         for msg in photo_msg:
-            photoname = msg[0].replace(r'.','')
-            photo_dir = os.path.join(name_dir,photoname)
-            taobao.makedir(photo_dir)
             img_url = msg[1]
-            img_msgs = taobao.get_img_url(img_url)
-            for img_msg in img_msgs:
-                imgfile = '%s.jpg' % img_msg[0]
-                imgpath = os.path.join(photo_dir,imgfile)
+            img_list = taobao.get_img_url(img_url,print_std=True)
+            for img_msg in img_list:
+                imgfile = '%d.jpg' % img_id
+                imgpath = os.path.join(name_dir,imgfile)
+                img_id  = img_id + 1
                 try:
-                    taobao.save_img(imgpath,img_msg[1])
-                except IOError:
-                    pass
+                    taobao.save_img(imgpath,img_msg)
+                except IOError,e :
+                    print e
 
 
 

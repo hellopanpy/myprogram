@@ -1,6 +1,6 @@
 #!--*--coding:utf-8--*--
 
-import urllib
+import urllib_test
 import urllib2
 import re
 

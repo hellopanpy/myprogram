@@ -1,6 +1,6 @@
 #--*--coding:utf-8--*--
 
-import urllib
+import urllib_test
 import urllib2
 
 url = 'http://zabbix.leoers.com/index.php'
@@ -10,7 +10,7 @@ data = { 'name':'name',
 		 }
 headers = { 'User-Agent' : user_agent,
 			'Referer':'http:///zabbix.leoers.com'} 
-data = urllib.urlencode(data)
+data = urllib_test.urlencode(data)
 request = urllib2.Request(url,data,headers)
 response = urllib2.urlopen(request)
 print response.read()

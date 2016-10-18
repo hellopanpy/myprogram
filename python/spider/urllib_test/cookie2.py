@@ -1,6 +1,6 @@
 #--*--coding:utf-8--*--
 
-import urllib
+import urllib_test
 import urllib2
 import cookielib
  
@@ -8,7 +8,7 @@ filename = 'cookie.txt'
 #声明一个MozillaCookieJar对象实例来保存cookie，之后写入文件
 cookie = cookielib.MozillaCookieJar(filename)
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie))
-postdata = urllib.urlencode({
+postdata = urllib_test.urlencode({
 	             'stuid':'201200131012',
 				 'pwd':'23342321'
 		})

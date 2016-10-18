@@ -27,10 +27,10 @@ html='''
     </html>
 '''
 selector=etree.HTML(html)
-content=selector.xpath('//div[@id="content"]/ul[@id="ul"]/li/text()')
+content=selector.xpath('//div[@id="content"]/ul[@id="ul"]/li')
 #这里使用id属性来定位哪个div和ul被匹配 使用text()获取文本内容
 for i in content:
-    print i
+    print i.text
 
 con=selector.xpath('//a/@href')
 #这里使用//从全文中定位符合条件的a标签，使用“@标签属性”获取a便签的href属性值
