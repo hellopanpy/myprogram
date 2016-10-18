@@ -167,6 +167,7 @@ if __name__ == "__main__":
                     taobao.save_img(imgpath,img_msg)
                 except IOError,e :
                     print e
+    taobao.drive_quit()
 
 
 
